@@ -10,9 +10,14 @@ class ClientForm(forms.ModelForm):
         fields = [
             'name',
             'company',
+            'cnpj',
+            'contact_name',
             'contact_info',
             'phone',
+            'contact_phone',
             'email',
+            'contact_email',
+            'email_invoice',
             'website',
             'address',
             'notes',
@@ -23,8 +28,14 @@ class ClientForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Row(Column('name'), Column('company'), css_class="g-3"),
-            Row(Column('contact_info'), Column('phone'), css_class="g-3"),
-            Row(Column('email'), Column('website'), css_class="g-3"),
+            Row(Column('cnpj'), Column('website'), css_class="g-3"),
+
+            Row(Column('contact_name'), Column('contact_info'), css_class="g-3"),
+            Row(Column('phone'), Column('contact_phone'), css_class="g-3"),
+
+            Row(Column('email'), Column('contact_email'), css_class="g-3"),
+            Row(Column('email_invoice'), css_class="g-3"),
+
             Row(Column('address', css_class="col-12")),
             Row(Column('notes', css_class="col-12")),
         )

@@ -225,7 +225,7 @@ def time_overview(request):
 
 # Cadastrar Cliente
 def add_client(request):
-    return handle_form(request, ClientForm, 'execution/interaction.html', 'Add New Client', 'Add Client', 'Client created successfully!')
+    return handle_form(request, ClientForm, 'execution/add_client.html', 'Add New Client', 'Add Client', 'Client created successfully!')
 
 # Listar Clientes
 def list_clients(request):
@@ -324,24 +324,33 @@ def generate_invoice_pdf(request, invoice_id):
 
 # Enviar E-mail da Fatura
 def send_invoice_pdf_email(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
+    invoice = get_404(Invoice, id=invoice_id)
+    client = invoice.client
 
-    # Renderiza o HTML da fatura
+    # 🔒 Check: email de envio
+    if not client.email_invoice:
+        messages.error(request, "Client does not have an email_invoice configured.")
+        return redirect('view_invoice', invoice_id)
+
+    # Renderiza HTML
     template = get_template('execution/invoice_print.html')
     html = template.render({'invoice': invoice})
 
     # Gera PDF em memória
     pdf_file = BytesIO()
     pdf_status = pisa.CreatePDF(src=html, dest=pdf_file)
-    if pdf_status.err:
-        return HttpResponse("Erro ao gerar PDF", status=500)
 
-    # Cria e envia o e-mail com anexo PDF
+    if pdf_status.err:
+        messages.error(request, "Error generating PDF.")
+        return redirect('view_invoice', invoice_id)
+
+    # Monta e envia e-mail
     email = EmailMessage(
         subject=f"Invoice {invoice.invoice_number}",
         body="Please find attached your invoice.",
-        from_email="you@example.com",  # ou settings.DEFAULT_FROM_EMAIL
-        to=[invoice.client.email],     # certifique-se de que há e-mail no modelo Client
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[client.email_invoice],
+        cc=[client.contact_email] if client.contact_email else None,
     )
     email.attach(
         filename=f"invoice_{invoice.invoice_number or invoice.id}.pdf",
@@ -350,25 +359,37 @@ def send_invoice_pdf_email(request, invoice_id):
     )
     email.send()
 
-    return redirect('view_invoice', invoice.id)
+    messages.success(request, "Invoice sent successfully.")
+    return redirect('view_invoice', invoice_id)
 
 # Enviar E-mail da Fatura (sem PDF)
 def send_invoice_email(request, invoice_id):
     invoice = get_404(Invoice, id=invoice_id)
-    subject = f"Invoice {invoice.invoice_number or invoice.id}"
-    message = render_to_string('execution/email_invoice.html', {'invoice': invoice})
-    recipient = invoice.client.email
+    client = invoice.client
 
-    send_mail(
-        subject=subject, 
-        message='', 
-        html_message=message,
-        from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[recipient],
-        fail_silently=False,
-    )    
-    
-    return redirect('view_invoice', invoice.id)
+    # Verificação obrigatória
+    if not client.email_invoice:
+        messages.error(request, "Client does not have an 'email_invoice' configured.")
+        return redirect('view_invoice', invoice_id)
+
+    subject = f"Invoice {invoice.invoice_number or invoice.id}"
+    html_content = render_to_string('execution/email_invoice.html', {'invoice': invoice})
+
+    try:
+        send_mail(
+            subject=subject,
+            message='',  # plaintext vazio
+            html_message=html_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[client.email_invoice],
+            cc=[client.contact_email] if client.contact_email else None,
+            fail_silently=False,
+        )
+        messages.success(request, "Invoice email sent successfully.")
+    except Exception as e:
+        messages.error(request, f"Error sending email: {str(e)}")
+
+    return redirect('view_invoice', invoice_id)
 
 # Cadastrar Despesa
 def add_expense(request):

@@ -46,7 +46,11 @@
     <p><strong>Date:</strong> {{ invoice.invoice_date }}</p>
     <p><strong>Due:</strong> {{ invoice.due_date }}</p>
     <p><strong>Status:</strong> {{ invoice.status }}</p>
-    <p><strong>Client:</strong> {{ invoice.client.name }}</p>
+    <p>
+        <strong>{{ invoice.client.company }}</strong><br>
+        CNPJ: {{ invoice.client.cnpj }}<br>
+        {{ invoice.client.address|linebreaksbr }}
+    </p>
 
     <h4>Sessions</h4>
     <table>
@@ -68,7 +72,7 @@
                 <td>{{ session.end_time }}</td>
                 <td>{{ session.duration_hours }} h</td>
                 <td>${{ session.hourly_rate|floatformat:2 }}</td>
-                <td>${{ session.hourly_rate|floatformat:2|add:"0"|floatformat:2|stringformat:"f"|add:session.duration_hours|floatformat:2 }}</td>
+                <td>${{ session.total_value|floatformat:2 }}</td>
             </tr>
         {% endfor %}
         </tbody>

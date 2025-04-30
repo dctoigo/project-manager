@@ -4,6 +4,7 @@ from django.db import models
 class Client(models.Model):
     name = models.CharField(max_length=255)
     company = models.CharField(max_length=255, blank=True, null=True)
+    cnpj = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -157,6 +158,12 @@ class TimeSession(models.Model):
     def duration_hours(self):
         if self.start_time and self.end_time:
             return round((self.end_time - self.start_time).total_seconds() / 3600, 2)
+        return 0
+
+    @property
+    def total_value(self):
+        if self.hourly_rate and self.duration_hours:
+            return round(self.hourly_rate * self.duration_hours, 2)
         return 0
 
     def __str__(self):

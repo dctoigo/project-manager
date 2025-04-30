@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Business Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.0.0/cal-heatmap.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.0.0/cal-heatmap.min.js"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">Business Manager</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-list fs-4"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown" style="min-width: 250px;">
+                            <!-- Time Overview -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Time Overview</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'time_overview' %}">Show Time</a></li>
+
+                            <!-- Clients -->
+                            <li><h6 class="dropdown-header">Clients</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_client' %}">Add Client</a></li>
+                            <li><a class="dropdown-item" href="{% url 'list_clients' %}">List Clients</a></li>
+                
+                            <!-- Contracts -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Contracts</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_contract' %}">Add Contract</a></li>
+                
+                            <!-- Projects -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Projects</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_project' %}">Add Project</a></li>
+                            <li><a class="dropdown-item" href="{% url 'list_projects' %}">List Projects</a></li>
+                
+                            <!-- Tasks -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Tasks</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_task' %}">Add Task</a></li>
+                            <li><a class="dropdown-item" href="{% url 'list_tasks' %}">List Tasks</a></li>
+                
+                            <!-- Time Sessions -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Time Sessions</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_time_session' %}">Add Session</a></li>
+                
+                            <!-- Invoices -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Invoices</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_invoice' %}">Add Invoice</a></li>
+                
+                            <!-- Expenses -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Expenses</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'add_expense' %}">Add Expense</a></li>
+                
+                            <!-- Export -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Reports</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'export_time_report' %}">Export Hours (CSV)</a></li>
+                
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<main class="container mt-4">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

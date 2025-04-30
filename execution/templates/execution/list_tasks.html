@@ -1,1 +1,37 @@
-<!-- list_tasks.html: agrupamento por cliente > projeto > tarefas -->
+<!-- list_tasks.html: agrupamento por cliente > projeto > tarefas -->{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{{ page_title }}</h2>
+
+    <!-- Filtro por Status -->
+    <form method="get" class="d-flex mb-4">
+        <select name="status" class="form-select me-2 w-auto">
+            <option value="">All Status</option>
+            <option value="To Do" {% if request.GET.status == 'To Do' %}selected{% endif %}>To Do</option>
+            <option value="In Progress" {% if request.GET.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Done" {% if request.GET.status == 'Done' %}selected{% endif %}>Done</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    {% for client in clients %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ client.name }}</h5>
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#client-{{ client.id }}" aria-expanded="true">
+                <i class="bi bi-chevron-down"></i>
+            </button>
+        </div>
+        <div class="collapse show" id="client-{{ client.id }}">
+            <div class="card-body">
+                {% include 'execution/partials/task_table.html' with tasks=project.filtered_tasks|default:project.task_set.all %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted text-center">No clients found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

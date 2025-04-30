@@ -1,0 +1,65 @@
+<table class="table table-sm table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Time Spent</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.priority }}</td>
+            <td>{{ task.status }}</td>
+            <td>{{ task.due_date }}</td>
+            <td>
+                {% if task.active_time_session %}
+                    <span id="timer-{{ task.id }}">Running...</span>
+                    <script>
+                        const startTime{{ task.id }} = new Date("{{ task.active_time_session.start_time|date:'Y-m-d H:i:s' }}").getTime();
+                        setInterval(function() {
+                            const now = new Date().getTime();
+                            const diff = now - startTime{{ task.id }};
+                            const h = Math.floor(diff / 3600000);
+                            const m = Math.floor((diff % 3600000) / 60000);
+                            document.getElementById("timer-{{ task.id }}").innerText = h + "h " + m + "m";
+                        }, 60000);
+                    </script>
+                {% else %}
+                    {{ task.total_duration_hours }}h
+                {% endif %}
+            </td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% if task.status != 'Done' %}
+                        <li>
+                            <form method="post" action="{% url 'start_stop_task' task.id %}" class="dropdown-item p-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link dropdown-item">Start/Stop</button>
+                            </form>
+                        </li>
+                        <li><a href="{% url 'complete_task' task.id %}" class="dropdown-item">Mark as Done</a></li>
+                        {% else %}
+                        <li><span class="dropdown-item text-muted">Completed</span></li>
+                        {% endif %}
+                        <li><a href="{% url 'edit_task' task.id %}" class="dropdown-item">Edit</a></li>
+                        <li>
+                            <a href="{% url 'delete_task' task.id %}" class="dropdown-item text-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted">No tasks found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>

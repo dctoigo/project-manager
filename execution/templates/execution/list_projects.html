@@ -1,1 +1,26 @@
-<!-- list_projects.html: agrupamento de projetos -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-5">Projects & Tasks</h2>
+
+    {% for project in projects %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ project.name }} ({{ project.client.name }})</h5>
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#project-{{ project.id }}" aria-expanded="true">
+                <i class="bi bi-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="collapse show" id="project-{{ project.id }}">
+            <div class="card-body">
+                {% include 'execution/partials/task_table.html' with tasks=project.task_set.all %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted text-center">No projects found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

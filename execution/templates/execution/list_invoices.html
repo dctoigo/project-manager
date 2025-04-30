@@ -1,1 +1,68 @@
-<!-- list_invoices.html: lista com filtros e ações para invoices -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ page_title }}</h2>
+        <div>
+            <a href="{% url 'add_invoice' %}" class="btn btn-success">Add Invoice</a>
+        </div>
+    </div>
+
+    <form method="get" class="d-flex mb-3">
+        <select name="status" class="form-select w-auto me-2">
+            <option value="">All Status</option>
+            <option value="Draft" {% if request.GET.status == 'Draft' %}selected{% endif %}>Draft</option>
+            <option value="Sent" {% if request.GET.status == 'Sent' %}selected{% endif %}>Sent</option>
+            <option value="Paid" {% if request.GET.status == 'Paid' %}selected{% endif %}>Paid</option>
+            <option value="Canceled" {% if request.GET.status == 'Canceled' %}selected{% endif %}>Canceled</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    <table class="table table-hover table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Status</th>
+                <th>Invoice Date</th>
+                <th>Due Date</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.invoice_number }}</td>
+                <td>{{ invoice.client.name }}</td>
+                <td>{{ invoice.status }}</td>
+                <td>{{ invoice.invoice_date }}</td>
+                <td>{{ invoice.due_date }}</td>
+                <td>${{ invoice.total_amount|floatformat:2 }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Actions
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'view_invoice' invoice.id %}" class="dropdown-item">View</a></li>
+                            <li><a href="{% url 'generate_invoice_pdf' invoice.id %}" class="dropdown-item">Generate PDF</a></li>
+                            <li><a href="{% url 'send_invoice_email' invoice.id %}" class="dropdown-item">Send Email</a></li>
+                            <li><a href="{% url 'send_invoice_pdf_email' invoice.id %}" class="dropdown-item">Send PDF by Email</a></li>
+                            {% if invoice.status != 'Canceled' %}
+                            <li><a href="{% url 'cancel_invoice' invoice.id %}" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to cancel this invoice?');">Cancel</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">No invoices found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -12,7 +12,7 @@ from django.conf import settings
 
 from .models import Client, Contract, Project, Task, TimeSession, Invoice, Expense
 from .forms import (
-    ClientForm, ContractForm, ProjectForm, TaskForm, TimeSessionForm, InvoiceForm 
+    ClientForm, ContractForm, ProjectForm, TaskForm, TimeSessionForm, InvoiceForm, ExpenseForm
 )
 
 from io import BytesIO
@@ -366,3 +366,8 @@ def send_invoice_email(request, invoice_id):
     )    
     
     return redirect('view_invoice', invoice.id)
+
+# Cadastrar Despesa
+def add_expense(request):
+    
+    return handle_form(request, ExpenseForm, 'execution/interaction.html', 'Add New Expense', 'Add Expense', 'Expense created successfully!')

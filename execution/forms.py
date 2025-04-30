@@ -1,6 +1,6 @@
 
 from django import forms
-from .models import Client, Contract, Project, Task, TimeSession, Invoice
+from .models import Client, Contract, Project, Task, TimeSession, Invoice, Expense
 
 class ClientForm(forms.ModelForm):
     class Meta:
@@ -38,3 +38,27 @@ class InvoiceForm(forms.ModelForm):
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ['name', 'project', 'contract', 'client', 'expense_date', 'category', 'amount', 'notes']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'project': forms.Select(attrs={'class': 'form-select'}),
+            'contract': forms.Select(attrs={'class': 'form-select'}),
+            'client': forms.Select(attrs={'class': 'form-select'}),
+            'expense_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(ExpenseForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.widget.input_type == 'checkbox':
+                field.widget.attrs['class'] = 'form-check-input'
+            elif field.widget.input_type == 'select':
+                field.widget.attrs['class'] = 'form-select'
+            else:
+                field.widget.attrs['class'] = 'form-control'

@@ -303,3 +303,48 @@ def list_invoices(request):
     }
 
     return render(request, 'execution/list_invoices.html', context)
+
+# Gerar PDF da Fatura
+def generate_invoice_pdf(request, invoice_id):
+    invoice = Invoice.objects.get(id=invoice_id)
+    template = get_template('execution/invoice_print.html')
+    html = template.render({'invoice': invoice})
+
+    result = BytesIO()
+    pdf_status = pisa.CreatePDF(src=html, dest=result)
+
+    if not pdf_status.err:
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="invoice_{invoice.invoice_number or invoice.id}.pdf"'
+        return response
+    return HttpResponse('Error generating PDF', status=500)
+
+# Enviar E-mail da Fatura
+def send_invoice_pdf_email(request, invoice_id):
+    invoice = Invoice.objects.get(id=invoice_id)
+
+    # Renderiza o HTML da fatura
+    template = get_template('execution/invoice_print.html')
+    html = template.render({'invoice': invoice})
+
+    # Gera PDF em memória
+    pdf_file = BytesIO()
+    pdf_status = pisa.CreatePDF(src=html, dest=pdf_file)
+    if pdf_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+
+    # Cria e envia o e-mail com anexo PDF
+    email = EmailMessage(
+        subject=f"Invoice {invoice.invoice_number}",
+        body="Please find attached your invoice.",
+        from_email="you@example.com",  # ou settings.DEFAULT_FROM_EMAIL
+        to=[invoice.client.email],     # certifique-se de que há e-mail no modelo Client
+    )
+    email.attach(
+        filename=f"invoice_{invoice.invoice_number or invoice.id}.pdf",
+        content=pdf_file.getvalue(),
+        mimetype="application/pdf"
+    )
+    email.send()
+
+    return redirect('view_invoice', invoice.id)

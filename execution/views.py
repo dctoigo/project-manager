@@ -54,3 +54,197 @@ def executive_dashboard(request):
     }
     return render(request, 'execution/executive_dashboard.html', context)
 
+
+# Cadastrar Tarefa
+def add_task(request, project_id=None, client_id=None):
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Task created successfully!')
+            return redirect('dashboard')
+    else:
+        form = TaskForm()
+        if project_id:
+            form.fields['project'].initial = project_id
+        if client_id:
+            form.fields['client'].initial = client_id
+
+    context = {
+        'form': form,
+        'page_title': 'Add New Task',
+        'button_text': 'Add Task'
+    }
+
+    return render(request, 'execution/interaction.html', context)
+
+# Listar Tarefas
+def list_tasks(request):
+    clients = Client.objects.prefetch_related('project_set__task_set')
+    status_filter = request.GET.get('status')
+
+    if status_filter:
+        for client in clients:
+            client.filtered_projects = []
+            for project in client.project_set.all():
+                project.filtered_tasks = project.task_set.filter(status=status_filter)
+                if project.filtered_tasks.exists():
+                    client.filtered_projects.append(project)
+    else:
+        for client in clients:
+            client.filtered_projects = client.project_set.all()
+
+    return render(request, 'execution/list_tasks.html', {
+        'clients': clients,
+        'page_title': 'Tasks by Client'
+    })
+
+# Editar Tarefa
+def edit_task(request, task_id):
+    task = Task.objects.get(id=task_id)
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Task updated successfully!')
+            return redirect('list_tasks')
+    else:
+        form = TaskForm(instance=task)
+
+    context = {
+        'form': form,
+        'page_title': 'Edit Task',
+        'button_text': 'Update Task'
+    }
+
+    return render(request, 'execution/interaction.html', context)
+
+# Deletar Tarefa
+def delete_task(request, task_id):
+    task = get_404(Task.objects.get(id=task_id))
+
+    if request.method == 'POST':
+        if task.time_sessions.exists():
+            messages.error(request, 'Task cannot be deleted while there are time sessions associated with it.')
+            return redirect('list_tasks')
+        
+        task.delete()
+        messages.success(request, 'Task deleted successfully!')
+        return redirect('list_tasks')
+
+# Completar Tarefa
+def complete_task(request, task_id):
+    task = get_404(Task, id=task_id)
+
+    has_open_session = task.time_sessions.filter(end_time__isnull=True).exists()
+    if has_open_session:
+        messages.error(request, 'Task cannot be marked as completed while there are open time sessions.')
+        return redirect('list_tasks')
+    else:
+        task.status = 'Done'
+        task.save()
+        messages.success(request, 'Task marked as completed!')
+    return redirect('list_tasks')
+
+# Cadastrar Sessão de Trabalho
+def add_time_session(request):
+    return handle_form(request, TimeSessionForm, 'execution/interaction.html', 'Add New Time Session', 'Add Time Session', 'Time Session created successfully!')
+
+# Iniciar/Parar Sessão de Trabalho
+def start_stop_task(request, task_id):
+    task = get_404(Task.objects.get(id=task_id))
+
+    if task.status == 'Done':
+        messages.error(request, 'Can`t start a task that is already completed.')
+        return redirect('list_tasks')
+    
+    open_session = task.time_sessions.filter(end_time__isnull=True).first()
+    if open_session:
+        open_session.end_time = timezone.now()
+        open_session.save()
+        messages.success(request, 'Time Session stopped for task!')
+    else:
+        task.time_sessions.create(
+            name=f"Session {timezone.now().strftime('%Y-%m-%d %H:%M')}",
+            start_time=timezone.now(),
+        )
+        if task.status != 'In Progress':
+            task.status = 'In Progress'
+            task.save()    
+        messages.success(request, 'Time Session started for task!')
+    
+    return redirect('list_tasks')
+
+# Exportar Relatório de Horas
+def export_time_report(request):
+    tasks = Task.objects.all()
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="time_report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Task', 'Project', 'Client', 'Status', 'Hours Spent'])
+
+    for task in tasks:
+        writer.writerow([
+            task.name,
+            task.project.name if task.project else '',
+            task.client.name if task.client else '',
+            task.status,
+            task.total_duration_hours
+        ])
+
+    return response
+
+# Time Overview
+def time_overview(request):
+    start = date.today() - timedelta(days=180)  # últimos 6 meses
+    sessions = (
+        TimeSession.objects
+        .filter(start_time__date__gte=start)
+        .annotate(day=TruncDate('start_time'))
+        .values('day')
+        .annotate(total_hours=Sum(
+            (F('end_time') - F('start_time'))
+        ))
+    )
+
+    # Converte para dicionário {data: horas}
+    heatmap_data = {}
+    for s in sessions:
+        if s['total_hours']:
+            total_seconds = s['total_hours'].total_seconds()
+            heatmap_data[s['day']] = round(total_seconds / 3600, 2)
+
+    return render(request, 'execution/time_overview.html', {
+        'heatmap_data': heatmap_data
+    })
+
+# Cadastrar Cliente
+def add_client(request):
+    return handle_form(request, ClientForm, 'execution/interaction.html', 'Add New Client', 'Add Client', 'Client created successfully!')
+
+# Listar Clientes
+def list_clients(request):
+    clients = Client.objects.all()
+    context = {
+        'clients': clients,
+        'page_title': 'List of Clients'
+    }
+    return render(request, 'execution/list_clients.html', context)
+
+# Cadastrar Contrato
+def add_contract(request):
+    return handle_form(request, ContractForm, 'execution/interaction.html', 'Add New Contract', 'Add Contract', 'Contract created successfully!')
+
+# Cadastrar Projeto
+def add_project(request):
+    return handle_form(request, ProjectForm, 'execution/interaction.html', 'Add New Project', 'Add Project', 'Project created successfully!')
+
+# Listar Projetos
+def list_projects(request):
+    projects = Project.objects.select_related('client').prefetch_related('task_set')
+    return render(request, 'execution/list_projects.html', {
+        'projects': projects,
+        'page_title': 'Project List'
+    })

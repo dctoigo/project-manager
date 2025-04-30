@@ -1,0 +1,59 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">Business Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-list fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuDropdown" style="min-width: 260px;">
+            <li><h6 class="dropdown-header text-primary">⏱ Time Overview</h6></li>
+            <li><a class="dropdown-item" href="{% url 'time_overview' %}">View Heatmap</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">👥 Clients</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_client' %}">Add Client</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_clients' %}">List Clients</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">📄 Contracts</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_contract' %}">Add Contract</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">📁 Projects</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_project' %}">Add Project</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_projects' %}">List Projects</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">📌 Tasks</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_task' %}">Add Task</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_tasks' %}">List Tasks</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">⏳ Time Sessions</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_time_session' %}">Add Session</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">💰 Invoices</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_invoice' %}">Add Invoice</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_invoices' %}">List Invoices</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">💸 Expenses</h6></li>
+            <li><a class="dropdown-item" href="{% url 'add_expense' %}">Add Expense</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-primary">📊 Reports</h6></li>
+            <li><a class="dropdown-item" href="{% url 'export_time_report' %}">Export Hours (CSV)</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,83 +1,86 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Executive Dashboard</h1>
-    <a href="{% url 'export_time_report' %}" class="btn btn-outline-primary">
-        Download Time Report (CSV)
-    </a>
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <div class="card shadow p-3">
-                <h4>Total Revenue</h4>
-                <h2>${{ total_revenue|floatformat:2 }}</h2>
+<div class="container mt-4">
+    <h2 class="text-primary mb-4 text-center">Executive Dashboard</h2>
+
+    <div class="text-center mb-4">
+        <a href="{% url 'export_time_report' %}" class="btn btn-outline-primary">
+            <i class="bi bi-download me-1"></i>Download Time Report (CSV)
+        </a>
+    </div>
+
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="card border-0 bg-light shadow-sm p-3">
+                <h6 class="text-muted">Total Revenue</h6>
+                <h2 class="text-success">${{ total_revenue|floatformat:2 }}</h2>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card shadow p-3">
-                <h4>Total Expenses</h4>
-                <h2>${{ total_expenses|floatformat:2 }}</h2>
+        <div class="col-md-4">
+            <div class="card border-0 bg-light shadow-sm p-3">
+                <h6 class="text-muted">Total Expenses</h6>
+                <h2 class="text-danger">${{ total_expenses|floatformat:2 }}</h2>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card shadow p-3">
-                <h4>Total Profit</h4>
-                <h2>${{ total_profit|floatformat:2 }}</h2>
+        <div class="col-md-4">
+            <div class="card border-0 bg-light shadow-sm p-3">
+                <h6 class="text-muted">Total Profit</h6>
+                <h2 class="text-dark">${{ total_profit|floatformat:2 }}</h2>
             </div>
         </div>
     </div>
 
-    <div class="row text-center mt-4">
-        <div class="col-md-6 mb-4">
-            <div class="card shadow p-3">
-                <h5>Pending Invoices</h5>
-                <h3>{{ pending_invoices }}</h3>
+    <div class="row g-4 text-center mt-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-3 bg-white">
+                <h6 class="text-muted">Pending Invoices</h6>
+                <h3 class="text-warning">{{ pending_invoices }}</h3>
             </div>
         </div>
-        <div class="col-md-6 mb-4">
-            <div class="card shadow p-3">
-                <h5>Paid Invoices</h5>
-                <h3>{{ paid_invoices }}</h3>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-3 bg-white">
+                <h6 class="text-muted">Paid Invoices</h6>
+                <h3 class="text-success">{{ paid_invoices }}</h3>
             </div>
         </div>
     </div>
+
     <div class="row mt-5">
         <div class="col-md-12">
-            <div class="card shadow p-4">
-                <h5 class="mb-4 text-center">Revenue Over Time</h5>
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="text-center mb-4">📈 Revenue Over Time</h5>
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
     </div>
-    
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-    
-        const revenueChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June'], // Exemplo
-                datasets: [{
-                    label: 'Revenue ($)',
-                    data: [1200, 1500, 1800, 2000, 1700, 2100], // Exemplo
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June'], // Exemplo
+            datasets: [{
+                label: 'Revenue ($)',
+                data: [1200, 1500, 1800, 2000, 1700, 2100], // Exemplo
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
+        }
     });
-    </script>
-</div>
+});
+</script>
 {% endblock %}

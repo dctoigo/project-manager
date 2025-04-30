@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Time Overview (Last 6 Months)</h2>
+
+    <div id="cal-heatmap"></div>
+</div>
+
+<script>
+    const cal = new CalHeatmap();
+    cal.paint({
+        range: 6,
+        domain: "month",
+        subDomain: "day",
+        data: {
+            source: Object.entries({{ heatmap_data|safe }}).reduce((acc, [k, v]) => {
+                acc[(new Date(k)).getTime() / 1000] = v;
+                return acc;
+            }, {}),
+            type: "json",
+        },
+        scale: {
+            color: {
+                type: "linear",
+                domain: [0, 8], // 0h → 8h ou mais
+                range: ["#e0f3f8", "#005824"]
+            },
+        },
+        tooltip: true,
+        itemSelector: "#cal-heatmap"
+    });
+</script>
+{% endblock %}

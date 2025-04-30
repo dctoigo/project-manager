@@ -26,8 +26,8 @@ class Contract(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     contract_date = models.DateField()
     contract_value = models.DecimalField(max_digits=12, decimal_places=2)
-    billing_type = models.CharField(max_length=20, choices=BILLING_TYPE_CHOICES)
-    billing_cadence = models.CharField(max_length=20, choices=BILLING_CADENCE_CHOICES)
+    billing_type = models.CharField(max_length=20, choices=BILLING_TYPE_CHOICES, default=None)
+    billing_cadence = models.CharField(max_length=20, choices=BILLING_CADENCE_CHOICES, default=None)
 
     def __str__(self):
         return f"{self.name} ({self.client.name})"

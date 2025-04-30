@@ -348,3 +348,21 @@ def send_invoice_pdf_email(request, invoice_id):
     email.send()
 
     return redirect('view_invoice', invoice.id)
+
+# Enviar E-mail da Fatura (sem PDF)
+def send_invoice_email(request, invoice_id):
+    invoice = get_404(Invoice, id=invoice_id)
+    subject = f"Invoice {invoice.invoice_number or invoice.id}"
+    message = render_to_string('execution/email_invoice.html', {'invoice': invoice})
+    recipient = invoice.client.email
+
+    send_mail(
+        subject=subject, 
+        message='', 
+        html_message=message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[recipient],
+        fail_silently=False,
+    )    
+    
+    return redirect('view_invoice', invoice.id)

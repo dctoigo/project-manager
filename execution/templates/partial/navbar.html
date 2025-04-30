@@ -1,58 +1,98 @@
+
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">Business Manager</a>
+  <div class="container-fluid px-4">
+    <!-- Left: Logo -->
+    <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">🚀 Squad Projects</a>
+
+    <!-- Toggler -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Center + Right -->
     <div class="collapse navbar-collapse" id="mainNavbar">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-list fs-4"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuDropdown" style="min-width: 260px;">
-            <li><h6 class="dropdown-header text-primary">⏱ Time Overview</h6></li>
-            <li><a class="dropdown-item" href="{% url 'time_overview' %}">View Heatmap</a></li>
+      <!-- Centered Dropdown Menus -->
+      <ul class="navbar-nav mx-auto d-flex gap-3">
 
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">👥 Clients</h6></li>
+        <!-- Clients -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="clientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            👥 Clients
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
             <li><a class="dropdown-item" href="{% url 'add_client' %}">Add Client</a></li>
             <li><a class="dropdown-item" href="{% url 'list_clients' %}">List Clients</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">📄 Contracts</h6></li>
-            <li><a class="dropdown-item" href="{% url 'add_contract' %}">Add Contract</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">📁 Projects</h6></li>
-            <li><a class="dropdown-item" href="{% url 'add_project' %}">Add Project</a></li>
-            <li><a class="dropdown-item" href="{% url 'list_projects' %}">List Projects</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">📌 Tasks</h6></li>
-            <li><a class="dropdown-item" href="{% url 'add_task' %}">Add Task</a></li>
-            <li><a class="dropdown-item" href="{% url 'list_tasks' %}">List Tasks</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">⏳ Time Sessions</h6></li>
-            <li><a class="dropdown-item" href="{% url 'add_time_session' %}">Add Session</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">💰 Invoices</h6></li>
-            <li><a class="dropdown-item" href="{% url 'add_invoice' %}">Add Invoice</a></li>
-            <li><a class="dropdown-item" href="{% url 'list_invoices' %}">List Invoices</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">💸 Expenses</h6></li>
-            <li><a class="dropdown-item" href="{% url 'add_expense' %}">Add Expense</a></li>
-
-            <li><hr class="dropdown-divider"></li>
-            <li><h6 class="dropdown-header text-primary">📊 Reports</h6></li>
-            <li><a class="dropdown-item" href="{% url 'export_time_report' %}">Export Hours (CSV)</a></li>
           </ul>
         </li>
+
+        <!-- Projects -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            📁 Projects
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="{% url 'add_project' %}">Add Project</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_projects' %}">List Projects</a></li>
+          </ul>
+        </li>
+
+        <!-- Tasks -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="tasksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            📌 Tasks
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="tasksDropdown">
+            <li><a class="dropdown-item" href="{% url 'add_task' %}">Add Task</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_tasks' %}">List Tasks</a></li>
+          </ul>
+        </li>
+
+        <!-- Time -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="timeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            ⏱ Time
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="timeDropdown">
+            <li><a class="dropdown-item" href="{% url 'add_time_session' %}">Add Session</a></li>
+            <li><a class="dropdown-item" href="{% url 'time_overview' %}">Overview</a></li>
+            <li><a class="dropdown-item" href="{% url 'export_time_report' %}">Export CSV</a></li>
+          </ul>
+        </li>
+
+        <!-- Finances -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            💰 Finance
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="financeDropdown">
+            <li><a class="dropdown-item" href="{% url 'add_invoice' %}">Add Invoice</a></li>
+            <li><a class="dropdown-item" href="{% url 'list_invoices' %}">List Invoices</a></li>
+            <li><a class="dropdown-item" href="{% url 'add_expense' %}">Add Expense</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Right: User Auth -->
+      <ul class="navbar-nav ms-auto">
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i> {{ user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </div>

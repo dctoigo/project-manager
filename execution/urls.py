@@ -41,5 +41,6 @@ urlpatterns = [
 
     # Other Functions
     path('export-time-report/', views.export_time_report, name='export_time_report'),
-    path('time-overview/', views.time_overview, name='time_overview')
+    path('time-overview/', views.time_overview, name='time_overview'),
+    path('profile/', views.user_profile, name='profile'),
 ]

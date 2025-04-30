@@ -135,3 +135,7 @@ EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'diogo@squadra.dev.br'
 EMAIL_HOST_PASSWORD = 'zP19j@noc'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'login'

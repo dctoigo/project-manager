@@ -9,6 +9,7 @@ from django.db.models.functions import TruncDate
 from django.template.loader import render_to_string, get_template
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 from .models import Client, Contract, Project, Task, TimeSession, Invoice, Expense
 from .forms import (
@@ -37,6 +38,7 @@ def handle_form(request, form_class, template_name, page_tittle, button_text, su
     })
 
 # Executive Dashboard View
+@login_required
 def executive_dashboard(request):
     total_revenue = Invoice.objects.filter(status='Paid').aggregate(total=Sum('tasks__amount'))['total'] or 0
     total_expenses = Expense.objects.aggregate(total=Sum('amount'))['total'] or 0
@@ -56,6 +58,7 @@ def executive_dashboard(request):
 
 
 # Cadastrar Tarefa
+
 def add_task(request, project_id=None, client_id=None):
     if request.method == 'POST':
         form = TaskForm(request.POST)
@@ -371,3 +374,8 @@ def send_invoice_email(request, invoice_id):
 def add_expense(request):
     
     return handle_form(request, ExpenseForm, 'execution/interaction.html', 'Add New Expense', 'Add Expense', 'Expense created successfully!')
+
+# User Profile
+@login_required
+def user_profile(request):
+    return render(request, 'profile.html')

@@ -9,6 +9,8 @@
     flex-wrap: wrap;
     gap: 10px 30px;
     justify-content: flex-start;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .dropdown-menu .dropdown-item {
@@ -18,8 +20,6 @@
     border-radius: 4px;
     transition: background-color 0.2s ease, color 0.2s ease;
     white-space: nowrap;
-    width: auto;
-    flex: 0 0 auto;
 }
 
 .dropdown-menu .dropdown-item:hover {
@@ -32,9 +32,6 @@
     font-size: 0.8rem;
     font-weight: bold;
     color: #0d6efd;
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 4px;
 }
 
   body {

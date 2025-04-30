@@ -1,11 +1,33 @@
 
 from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column
 from .models import Client, Contract, Project, Task, TimeSession, Invoice, Expense
 
 class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
-        fields = '__all__'
+        fields = [
+            'name',
+            'company',
+            'contact_info',
+            'phone',
+            'email',
+            'website',
+            'address',
+            'notes',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(Column('name'), Column('company'), css_class="g-3"),
+            Row(Column('contact_info'), Column('phone'), css_class="g-3"),
+            Row(Column('email'), Column('website'), css_class="g-3"),
+            Row(Column('address', css_class="col-12")),
+            Row(Column('notes', css_class="col-12")),
+        )
 
 class ContractForm(forms.ModelForm):
     class Meta:

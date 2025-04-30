@@ -275,3 +275,31 @@ def add_invoice(request):
         'form': form,
         'sessions': sessions
     })
+
+# Visualizar Fatura
+def view_invoice(request, invoice_id):
+    invoice = get_404(Invoice, id=invoice_id)
+    return render(request, 'execution/view_invoice.html', {'invoice': invoice})
+
+# Cancelar Fatura
+def cancel_invoice(request, invoice_id):
+    invoice = get_404(Invoice, id=invoice_id)
+    invoice.sessions.update(invoice=None)
+    invoice.status = 'Canceled'
+    invoice.save()
+    return redirect('view_invoice', invoice.id)
+
+# Listar Faturas
+def list_invoices(request):
+    status_filter = request.GET.get('status')
+    if status_filter:
+        invoices = Invoice.objects.filter(status=status_filter)
+    else:
+        invoices = Invoice.objects.all()
+    
+    context = {
+        'invoices': invoices,
+        'page_title': 'Invoices'
+    }
+
+    return render(request, 'execution/list_invoices.html', context)

@@ -248,3 +248,30 @@ def list_projects(request):
         'projects': projects,
         'page_title': 'Project List'
     })
+
+# Cadastrar Fatura
+def add_invoice(request):
+    if request.method == 'POST':
+        form = InvoiceForm(request.POST)
+        session_ids = request.POST.getlist('sessions')
+        if form.is_valid():
+            invoice = form.save(commit=False)
+            invoice.invoice_number = f"INV-{Invoice.objects.count() + 1:04d}"
+            invoice.save()
+            form.save_m2m()
+
+            # Associar sessões
+            TimeSession.objects.filter(id__in=session_ids).update(invoice=invoice)
+
+            # Associar tasks envolvidas
+            invoice.tasks.set(Task.objects.filter(time_sessions__invoice=invoice).distinct())
+
+            return redirect('view_invoice', invoice.id)
+    else:
+        form = InvoiceForm()
+
+    sessions = TimeSession.objects.filter(end_time__isnull=False, invoice__isnull=True)
+    return render(request, 'execution/add_invoice.html', {
+        'form': form,
+        'sessions': sessions
+    })

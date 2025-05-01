@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,6 +38,10 @@
         .summary td {
             padding: 5px;
         }
+        .client-box {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -46,11 +51,15 @@
     <p><strong>Date:</strong> {{ invoice.invoice_date }}</p>
     <p><strong>Due:</strong> {{ invoice.due_date }}</p>
     <p><strong>Status:</strong> {{ invoice.status }}</p>
-    <p>
-        <strong>{{ invoice.client.company }}</strong><br>
-        CNPJ: {{ invoice.client.cnpj }}<br>
-        {{ invoice.client.address|linebreaksbr }}
-    </p>
+
+    <div class="client-box">
+        <h4>Client</h4>
+        <p>
+            <strong>{{ invoice.client.company }}</strong><br>
+            CNPJ: {{ invoice.client.cnpj }}<br>
+            {{ invoice.client.address|linebreaksbr }}
+        </p>
+    </div>
 
     <h4>Sessions</h4>
     <table>
